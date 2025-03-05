@@ -11,56 +11,30 @@
   <summary> 클릭해서 코드 보기 </summary>
 
   ```python
-  import cv2 as cv
-  import numpy as np
+import cv2 as cv
+import numpy as np
 
-  # 전역 변수 초기화
-  roi = None
-  start_x, start_y, end_x, end_y = -1, -1, -1, -1
-  drawing = False
-  image = cv.imread("C:/Users/82107/Desktop/cv/soccer.jpg")  # 이미지 로드
-  original_image = image.copy()
+# 이미지 불러오기
+image = cv.imread("C:/Users/82107/Desktop/cv/soccer.jpg")  # 불러올 이미지 파일명 지정
+if image is None:
+    print("이미지를 불러올 수 없습니다.")
+    exit()
 
-  def mouse_callback(event, x, y, flags, param):
-      global start_x, start_y, end_x, end_y, drawing, roi, image
-      
-      if event == cv.EVENT_LBUTTONDOWN:  # 마우스 클릭 시작
-          start_x, start_y = x, y
-          drawing = True
-      
-      elif event == cv.EVENT_MOUSEMOVE:  # 드래그 중
-          if drawing:
-              image = original_image.copy()
-              cv.rectangle(image, (start_x, start_y), (x, y), (0, 255, 0), 2)
-      
-      elif event == cv.EVENT_LBUTTONUP:  # 마우스 버튼 놓기
-          end_x, end_y = x, y
-          drawing = False
-          roi = original_image[start_y:end_y, start_x:end_x]
-          cv.imshow("ROI", roi)
+# 그레이 스케일 변환
+gray_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
-  def main():
-      global image, original_image, roi
-      cv.namedWindow("Image")
-      cv.setMouseCallback("Image", mouse_callback)
-      
-      while True:
-          cv.imshow("Image", image)
-          key = cv.waitKey(1) & 0xFF
-          
-          if key == ord('r'):  # r 키를 누르면 초기화
-              image = original_image.copy()
-              roi = None
-          elif key == ord('s') and roi is not None:  # s 키를 누르면 ROI 저장
-              cv.imwrite("roi.jpg", roi)
-              print("ROI saved as roi.jpg")
-          elif key == ord('q'):  # q 키를 누르면 종료
-              break
-      
-      cv.destroyAllWindows()
+# 원본 이미지와 그레이 스케일 이미지를 나란히 연결
+combined_image = np.hstack((image, cv.cvtColor(gray_image, cv.COLOR_GRAY2BGR)))
 
-  if __name__ == "__main__":
-      main()
+# 이미지 창 크기 조정
+window_name = 'Image Display'
+cv.namedWindow(window_name, cv.WINDOW_NORMAL)  # 창 크기 조정 가능하게 설정
+cv.resizeWindow(window_name, 1200, 600)  # 원하는 창 크기 설정 (너비 1200, 높이 600)
+
+# 이미지 출력
+cv.imshow(window_name, combined_image)  # 첫 번째 인자는 창 제목, 두 번째 인자는 이미지
+cv.waitKey(0)  # 아무 키나 누르면 창 닫기
+cv.destroyAllWindows()
  ```
 </details>
 

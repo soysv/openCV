@@ -67,7 +67,7 @@
 <br>
 
 ## 결과화면
-![결과이미지]("C:\Users\82107\Pictures\Screenshots\1.png")
+![결과이미지]("./data/1.png")
 
 <br>
 <br>
@@ -124,6 +124,7 @@ if __name__ == "__main__":
 <br>
 
 ## 결과화면
+![결과이미지]("./data/2.png")
 
 <br>
 <br>
@@ -197,6 +198,7 @@ if __name__ == "__main__":
 <br>
 
 ## 결과화면
+![결과이미지]("./data/3.png")
 
 
 

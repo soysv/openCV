@@ -6,11 +6,11 @@
 <br>
 
 ## 핵심 코드
-✔ cv.imread(image_path): 이미지를 불러옴
-✔ cv.cvtColor(image, cv.COLOR_BGR2GRAY): 그레이스케일 변환
-✔ cv.threshold(gray_image, 127, 255, cv.THRESH_BINARY): 임계값(127)으로 이진화
-✔ cv.calcHist([binary_image], [0], None, [256], [0,256]): 히스토그램 계산
-✔ plt.plot(hist): 히스토그램 시각화
+- ✔ cv.imread(image_path): 이미지를 불러옴
+- ✔ cv.cvtColor(image, cv.COLOR_BGR2GRAY): 그레이스케일 변환
+- ✔ cv.threshold(gray_image, 127, 255, cv.THRESH_BINARY): 임계값(127)으로 이진화
+- ✔ cv.calcHist([binary_image], [0], None, [256], [0,256]): 히스토그램 계산
+- ✔ plt.plot(hist): 히스토그램 시각화
 <br>
 
 ## 코드
@@ -86,11 +86,11 @@ process_image(image_path)
 <br>
 
 ## 핵심 코드 
-✔ cv.getStructuringElement(cv.MORPH_RECT, (5, 5)): 5x5 크기의 사각형 커널 생성
-✔ cv.morphologyEx(binary_image, cv.MORPH_DILATE, kernel): 팽창 연산 적용
-✔ cv.morphologyEx(binary_image, cv.MORPH_ERODE, kernel): 침식 연산 적용
-✔ cv.morphologyEx(binary_image, cv.MORPH_OPEN, kernel): 열림 연산 적용
-✔ cv.morphologyEx(binary_image, cv.MORPH_CLOSE, kernel): 닫힘 연산 적용
+- ✔ cv.getStructuringElement(cv.MORPH_RECT, (5, 5)): 5x5 크기의 사각형 커널 생성
+- ✔ cv.morphologyEx(binary_image, cv.MORPH_DILATE, kernel): 팽창 연산 적용
+- ✔ cv.morphologyEx(binary_image, cv.MORPH_ERODE, kernel): 침식 연산 적용
+- ✔ cv.morphologyEx(binary_image, cv.MORPH_OPEN, kernel): 열림 연산 적용
+- ✔ cv.morphologyEx(binary_image, cv.MORPH_CLOSE, kernel): 닫힘 연산 적용
 
 <br>
 
@@ -184,9 +184,9 @@ process_image(image_path)
 <br>
 
 ## 핵심 코드 
-✔ cv.getRotationMatrix2D((cols / 2, rows / 2), 45, 1): 회전 행렬 생성 (중심 기준 45도)
-✔ cv.warpAffine(binary_image, rotation_matrix, (cols, rows), flags=cv.INTER_LINEAR): 회전 적용
-✔ cv.resize(rotated_image, (int(cols*1.5), int(rows*1.5)), interpolation=cv.INTER_LINEAR): 확대 및 선형 보간 적용
+- ✔ cv.getRotationMatrix2D((cols / 2, rows / 2), 45, 1): 회전 행렬 생성 (중심 기준 45도)
+- ✔ cv.warpAffine(binary_image, rotation_matrix, (cols, rows), flags=cv.INTER_LINEAR): 회전 적용
+- ✔ cv.resize(rotated_image, (int(cols*1.5), int(rows*1.5)), interpolation=cv.INTER_LINEAR): 확대 및 선형 보간 적용
 
 <br>
 

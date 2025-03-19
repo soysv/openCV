@@ -3,8 +3,6 @@
 - 이미지를 불러와서 그레이스케일 변환 후 이진화(Thresholding) 수행
 - 이진화된 이미지의 히스토그램을 계산하고 시각화
 
-<br>
-
 ### 핵심 코드
 ✔ cv.imread(image_path): 이미지를 불러옴<br>
 ✔ cv.cvtColor(image, cv.COLOR_BGR2GRAY): 그레이스케일 변환<br>

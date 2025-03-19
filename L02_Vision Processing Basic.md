@@ -5,7 +5,7 @@
 
 <br>
 
-## 핵심 코드
+### 핵심 코드
 - ✔ cv.imread(image_path): 이미지를 불러옴
 - ✔ cv.cvtColor(image, cv.COLOR_BGR2GRAY): 그레이스케일 변환
 - ✔ cv.threshold(gray_image, 127, 255, cv.THRESH_BINARY): 임계값(127)으로 이진화

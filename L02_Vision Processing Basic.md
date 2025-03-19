@@ -6,11 +6,11 @@
 <br>
 
 ### 핵심 코드
-- ✔ cv.imread(image_path): 이미지를 불러옴
-- ✔ cv.cvtColor(image, cv.COLOR_BGR2GRAY): 그레이스케일 변환
-- ✔ cv.threshold(gray_image, 127, 255, cv.THRESH_BINARY): 임계값(127)으로 이진화
-- ✔ cv.calcHist([binary_image], [0], None, [256], [0,256]): 히스토그램 계산
-- ✔ plt.plot(hist): 히스토그램 시각화
+✔ cv.imread(image_path): 이미지를 불러옴<br>
+✔ cv.cvtColor(image, cv.COLOR_BGR2GRAY): 그레이스케일 변환<br>
+✔ cv.threshold(gray_image, 127, 255, cv.THRESH_BINARY): 임계값(127)으로 이진화<br>
+✔ cv.calcHist([binary_image], [0], None, [256], [0,256]): 히스토그램 계산<br>
+✔ plt.plot(hist): 히스토그램 시각화<br>
 <br>
 
 ### 코드

@@ -1,5 +1,5 @@
-# 01. 이진화 및 히스토그램 구하기
-## 과제 설명
+## 01. 이진화 및 히스토그램 구하기
+### 과제 설명
 - 이미지를 불러와서 그레이스케일 변환 후 이진화(Thresholding) 수행
 - 이진화된 이미지의 히스토그램을 계산하고 시각화
 
@@ -13,7 +13,7 @@
 - ✔ plt.plot(hist): 히스토그램 시각화
 <br>
 
-## 코드
+### 코드
 <details>
   <summary> 클릭해서 코드 보기 </summary>
 
@@ -73,19 +73,19 @@ process_image(image_path)
 
 <br>
 
-## 결과화면
+### 결과화면
 ![결과이미지](./data/4.png)
 
 <br>
 <br>
 
-# 02. 모폴로지 연산 적용하기
-## 과제 설명
+## 02. 모폴로지 연산 적용하기
+### 과제 설명
 - 이진화된 이미지에 팽창(Dilation), 침식(Erosion), 열림(Opening), 닫힘(Closing) 연산 적용
 
 <br>
 
-## 핵심 코드 
+### 핵심 코드 
 - ✔ cv.getStructuringElement(cv.MORPH_RECT, (5, 5)): 5x5 크기의 사각형 커널 생성
 - ✔ cv.morphologyEx(binary_image, cv.MORPH_DILATE, kernel): 팽창 연산 적용
 - ✔ cv.morphologyEx(binary_image, cv.MORPH_ERODE, kernel): 침식 연산 적용
@@ -94,7 +94,7 @@ process_image(image_path)
 
 <br>
 
-## 코드
+### 코드
 <details>
   <summary> 클릭해서 코드 보기 </summary>
 
@@ -170,20 +170,20 @@ process_image(image_path)
 
 <br>
 
-## 결과화면
+### 결과화면
 ![결과이미지](./data/5.png)
 
 <br>
 <br>
 
-# 03. 기하 연산 및 선형 보간 적용하기
-## 과제 설명
+## 03. 기하 연산 및 선형 보간 적용하기
+### 과제 설명
 - 이미지를 45도 회전하고, 1.5배 확대
 - 확대된 이미지에 선형 보간(Bilinear Interpolation) 적용
 
 <br>
 
-## 핵심 코드 
+### 핵심 코드 
 - ✔ cv.getRotationMatrix2D((cols / 2, rows / 2), 45, 1): 회전 행렬 생성 (중심 기준 45도)
 - ✔ cv.warpAffine(binary_image, rotation_matrix, (cols, rows), flags=cv.INTER_LINEAR): 회전 적용
 - ✔ cv.resize(rotated_image, (int(cols*1.5), int(rows*1.5)), interpolation=cv.INTER_LINEAR): 확대 및 선형 보간 적용
@@ -191,7 +191,7 @@ process_image(image_path)
 <br>
 
 
-## 코드
+### 코드
 <details>
   <summary> 클릭해서 코드 보기 </summary>
 
@@ -290,7 +290,7 @@ process_image(image_path)
 
 <br>
 
-## 결과화면
+### 결과화면
 ![결과이미지](./data/6.png)
 
 

@@ -1,20 +1,30 @@
-## 01. 이진화 및 히스토그램 구하기
-### 과제 설명
-- 이미지를 불러와서 그레이스케일 변환 후 이진화(Thresholding) 수행
-- 이진화된 이미지의 히스토그램을 계산하고 시각화
-
-### 핵심 코드
-✔ cv.imread(image_path): 이미지를 불러옴<br>
-✔ cv.cvtColor(image, cv.COLOR_BGR2GRAY): 그레이스케일 변환<br>
-✔ cv.threshold(gray_image, 127, 255, cv.THRESH_BINARY): 임계값(127)으로 이진화<br>
-✔ cv.calcHist([binary_image], [0], None, [256], [0,256]): 히스토그램 계산<br>
-✔ plt.plot(hist): 히스토그램 시각화<br>
+## 1️⃣ 이진화 및 히스토그램 구하기
+### 🌀 과제 설명
+- 이미지를 불러와서 <b>그레이스케일</b> 변환 후 <b>이진화(Thresholding)</b> 수행
+- 이진화된 이미지의 <b>히스토그램</b>을 계산하고 시각화
+<br>
+  
+### 📌 개념
+- OpenCV의 cv.imread(), cv.cvtColor(), cv.threshold() 함수 이해
+- 히스토그램의 개념과 cv.calcHist()를 이용한 히스토그램 생성 방법
+- Matplotlib을 활용한 데이터 시각화
 <br>
 
-### 코드
-<details>
-  <summary> 클릭해서 코드 보기 </summary>
+### 💻 주요 코드
+<p>✔ <b>이미지 불러오기 </b><code>cv.imread(image_path)</code><br></p>
+<p>✔ <b>그레이스케일 변환</b> <code>cv.cvtColor(image, cv.COLOR_BGR2GRAY)</code><br>
+<p>✔ <b>이진화 적용</b> <code>cv.threshold(gray_image, 127, 255, cv.THRESH_BINARY)</code><br>
+<p>✔ <b>히스토그램 계산</b> <code>cv.calcHist([binary_image], [0], None, [256], [0, 256])</code><br>
+<p>✔ <b>시각화</b> <code>plt.plot(hist, color='black')</code><br>
+<br>
 
+<br>
+
+
+
+<details>
+  <summary><b> 🧿 클릭해서 코드 보기 </b></summary>
+  
   ```python
 import cv2 as cv
 import numpy as np
@@ -71,30 +81,33 @@ process_image(image_path)
 
 <br>
 
-### 결과화면
+### 🕵‍♀ 결과화면
 ![결과이미지](./data/4.png)
 
 <br>
 <br>
 
-## 02. 모폴로지 연산 적용하기
-### 과제 설명
-- 이진화된 이미지에 팽창(Dilation), 침식(Erosion), 열림(Opening), 닫힘(Closing) 연산 적용
-
+## 2️⃣ 모폴로지 연산 적용하기
+### 🌀 과제 설명
+- 이진화된 이미지에 대해 <b>팽창(Dilation), 침식(Erosion), 열림(Opening), 닫힘(Closing) 연산</b>을 수행하여<br> 노이즈 제거 및 형태 보정
 <br>
 
-### 핵심 코드 
-- ✔ cv.getStructuringElement(cv.MORPH_RECT, (5, 5)): 5x5 크기의 사각형 커널 생성
-- ✔ cv.morphologyEx(binary_image, cv.MORPH_DILATE, kernel): 팽창 연산 적용
-- ✔ cv.morphologyEx(binary_image, cv.MORPH_ERODE, kernel): 침식 연산 적용
-- ✔ cv.morphologyEx(binary_image, cv.MORPH_OPEN, kernel): 열림 연산 적용
-- ✔ cv.morphologyEx(binary_image, cv.MORPH_CLOSE, kernel): 닫힘 연산 적용
-
+### 📌 개념
+- 모폴로지 연산(Morphological Operations) 개념
+- cv.getStructuringElement()를 활용한 커널(kernel) 생성
+- cv.morphologyEx()를 이용한 모폴로지 연산 적용 방법
 <br>
 
-### 코드
+### 💻 주요 코드
+<p>✔ <b>커널 생성</b> <code>cv.getStructuringElement(cv.MORPH_RECT, (5, 5))</code><br>
+<p>✔ <b>팽창(Dilation) 연산</b> <code>cv.morphologyEx(binary_image, cv.MORPH_DILATE, kernel)</code><br>
+<p>✔ <b>침식(Erosion) 연산</b> <code>cv.morphologyEx(binary_image, cv.MORPH_ERODE, kernel)</code><br>
+<p>✔ <b>열림(Opening) 연산</b> <code>cv.morphologyEx(binary_image, cv.MORPH_OPEN, kernel)</code><br>
+<p>✔ <b>닫힘(Closing) 연산</b> <code>cv.morphologyEx(binary_image, cv.MORPH_CLOSE, kernel)</code><br>
+<br>
+
 <details>
-  <summary> 클릭해서 코드 보기 </summary>
+  <summary><b> 🧿 클릭해서 코드 보기 </b></summary>
 
   ```python
 import cv2 as cv
@@ -168,30 +181,34 @@ process_image(image_path)
 
 <br>
 
-### 결과화면
+### 🕵‍♀ 결과화면
 ![결과이미지](./data/5.png)
 
 <br>
 <br>
 
-## 03. 기하 연산 및 선형 보간 적용하기
-### 과제 설명
+## 3️⃣ 기하 연산 및 선형 보간 적용하기
+### 🌀 과제 설명
 - 이미지를 45도 회전하고, 1.5배 확대
-- 확대된 이미지에 선형 보간(Bilinear Interpolation) 적용
-
+- 확대된 이미지에 <b>선형 보간(Bilinear Interpolation)</b> 적용
 <br>
 
-### 핵심 코드 
-- ✔ cv.getRotationMatrix2D((cols / 2, rows / 2), 45, 1): 회전 행렬 생성 (중심 기준 45도)
-- ✔ cv.warpAffine(binary_image, rotation_matrix, (cols, rows), flags=cv.INTER_LINEAR): 회전 적용
-- ✔ cv.resize(rotated_image, (int(cols*1.5), int(rows*1.5)), interpolation=cv.INTER_LINEAR): 확대 및 선형 보간 적용
+### 📌 개념
+- cv.getRotationMatrix2D()를 이용한 회전 변환 행렬 생성
+- cv.warpAffine()을 이용한 이미지 회전 적용 방법
+- cv.resize()를 이용한 이미지 확대 및 보간법(Interpolation) 개념
+<br>
 
+### 💻 주요 코드
+<p> ✔ <b> 회전 행렬 생성</b> <code>cv.getRotationMatrix2D((cols/2, rows/2), 45, 1)</code><br>
+<p> ✔ <b> 회전 적용</b> <code>cv.warpAffine(binary_image, rotation_matrix, (cols, rows), flags=cv.INTER_LINEAR)</code><br>
+<p> ✔ <b> 이미지 확대 및 보간법 적용</b> <code>cv.resize(rotated_image, (int(cols*1.5), int(rows*1.5)), interpolation=cv.INTER_LINEAR)</code><br>
 <br>
 
 
 ### 코드
 <details>
-  <summary> 클릭해서 코드 보기 </summary>
+  <summary><b> 🧿 클릭해서 코드 보기 </b></summary>
 
   ```python
 import cv2 as cv
@@ -288,7 +305,7 @@ process_image(image_path)
 
 <br>
 
-### 결과화면
+### 🕵‍♀ 결과화면
 ![결과이미지](./data/6.png)
 
 

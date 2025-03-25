@@ -1,6 +1,6 @@
 # OpenCV
 
-## 학습목표
+### 학습목표
 - <b>영상 처리 및 분석</b>: OpenCV를 활용한 영상 데이터 처리, 필터링, 엣지 검출 등의 기초 기술 학습
 - <b>특징 추출 및 매칭</b>: SIFT, SURF, HOG 등 특징 추출 알고리즘의 이론과 응용
 - <b>딥러닝 및 CNN</b>: Convolutional Neural Network(CNN)의 구조와 학습 방법, 실습

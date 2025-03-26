@@ -160,16 +160,16 @@ detect_lines(image_path)
 <p> - cv.grabCut() 함수에서 사용하는 전경(foreground)과 배경(background) 모델을 저장할 배열 <br>
 <p> - 65: OpenCV에서 정해진 GMM(Gaussian Mixture Model) 파라미터 개수<br>
 <p> ✔ <b> 마스크 처리하여 배경 제거 </b> <code>mask2 = np.where((mask == cv.GC_BGD) | (mask == cv.GC_PR_BGD), 0, 1).astype('uint8')
-</code><br>
+</code>
 <p> - cv.GC_BGD(0): 확실한 배경
 <p> - cv.GC_PR_BGD(2): 가능성이 높은 배경
 <p> - cv.GC_FGD(1): 확실한 전경
 <p> - cv.GC_PR_FGD(3): 가능성이 높은 전경
 <p> - 배경 픽셀을 제거하고 전경만 남김
 <br>
+<br>
 
 
-### 코드
 <details>
   <summary><b> 🧿 클릭해서 코드 보기 </b></summary>
 

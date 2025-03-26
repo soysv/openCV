@@ -12,8 +12,8 @@
 ### 💻 주요 코드
 <p>✔ <b>이미지 불러오기 </b><code>cv.imread(image_path)</code><br></p>
 <p>✔ <b>그레이스케일 변환</b> <code>cv.cvtColor(image, cv.COLOR_BGR2GRAY)</code><br>
-<p>✔ <b>소벨 필터 적용</b> <code>cv.Sobel()</code><br>
-<p>✔ <b>에지 강도 계산</b> <code>cv.magnitude()</code><br>
+<p>✔ <b>소벨 필터 적용</b> <code>cv.Sobel(src, ddepth, dx, dy, ksize)</code><br>
+<p>✔ <b>에지 강도 계산</b> <code>edge_magnitude = cv.magnitude(sobel_x, sobel_y)</code><br>
 <p>✔ <b>이미지 시각화</b> <code>cv.imshow()</code><br>
 <br>
 
@@ -80,11 +80,9 @@ sobel_edge_detection(image_path)
 <br>
 
 ### 💻 주요 코드
-<p>✔ <b>커널 생성</b> <code>cv.getStructuringElement(cv.MORPH_RECT, (5, 5))</code><br>
-<p>✔ <b>팽창(Dilation) 연산</b> <code>cv.morphologyEx(binary_image, cv.MORPH_DILATE, kernel)</code><br>
-<p>✔ <b>침식(Erosion) 연산</b> <code>cv.morphologyEx(binary_image, cv.MORPH_ERODE, kernel)</code><br>
-<p>✔ <b>열림(Opening) 연산</b> <code>cv.morphologyEx(binary_image, cv.MORPH_OPEN, kernel)</code><br>
-<p>✔ <b>닫힘(Closing) 연산</b> <code>cv.morphologyEx(binary_image, cv.MORPH_CLOSE, kernel)</code><br>
+<p>✔ <b>캐니 에지 검출</b> <code>cv.Canny(image, threshold1, threshold2)</code><br>
+<p>✔ <b>허프 변환을 사용한 직선 검출</b> <code>cv.HoughLinesP(image, rho, theta, threshold, minLineLength, maxLineGap)</code><br>
+<p>✔ <b>검출된 직선을 원본 이미지에 빨간색으로 표시</b> <code>cv.line(image, (x1, y1), (x2, y2), (0, 0, 255), 2)</code><br>
 <br>
 
 <details>
@@ -154,14 +152,20 @@ detect_lines(image_path)
 - 초기 사각형(rect)을 설정하여 관심 영역 지정
 - GrabCut 알고리즘을 사용해 배경과 전경 분리
 - 마스크(mask) 처리를 통해 전경만 남김
-
-결과 시각화
 <br>
 
 ### 💻 주요 코드
-<p> ✔ <b> 회전 행렬 생성</b> <code>cv.getRotationMatrix2D((cols/2, rows/2), 45, 1)</code><br>
-<p> ✔ <b> 회전 적용</b> <code>cv.warpAffine(binary_image, rotation_matrix, (cols, rows), flags=cv.INTER_LINEAR)</code><br>
-<p> ✔ <b> 이미지 확대 및 보간법 적용</b> <code>cv.resize(rotated_image, (int(cols*1.5), int(rows*1.5)), interpolation=cv.INTER_LINEAR)</code><br>
+<p> ✔ <b> 초기 마스크 생성</b> <code>np.zeros(image.shape[:2], np.uint8)</code><br>
+<p> ✔ <b> 배경 모델과 전경 모델 초기화</b> <code>bgdModel = np.zeros((1, 65), np.float64)</code><br>
+<p> - cv.grabCut() 함수에서 사용하는 전경(foreground)과 배경(background) 모델을 저장할 배열 <br>
+<p> - 65: OpenCV에서 정해진 GMM(Gaussian Mixture Model) 파라미터 개수<br>
+<p> ✔ <b> 마스크 처리하여 배경 제거 </b> <code>mask2 = np.where((mask == cv.GC_BGD) | (mask == cv.GC_PR_BGD), 0, 1).astype('uint8')
+</code><br>
+<p> - cv.GC_BGD(0): 확실한 배경
+<p> - cv.GC_PR_BGD(2): 가능성이 높은 배경
+<p> - cv.GC_FGD(1): 확실한 전경
+<p> - cv.GC_PR_FGD(3): 가능성이 높은 전경
+<p> - 배경 픽셀을 제거하고 전경만 남김
 <br>
 
 

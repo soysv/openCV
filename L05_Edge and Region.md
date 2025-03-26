@@ -1,12 +1,12 @@
 ## 1️⃣ 소벨 에지 검출 및 결과 시각화
 ### 🌀 과제 설명
-- X축과 Y축 방향의 에지를 검출하여 이미지의 경계를 강조 
+- 소벨(Sobel) 필터를 사용해 엣지를 검출
 <br>
   
 ### 📌 개념
-- OpenCV의 cv.imread(), cv.cvtColor(), cv.threshold() 함수 이해
-- 히스토그램의 개념과 cv.calcHist()를 이용한 히스토그램 생성 방법
-- Matplotlib을 활용한 데이터 시각화
+- 소벨 필터를 이용해 X, Y 방향의 기울기를 계산
+- 기울기를 조합하여 에지 강도(edge magnitude) 계산
+- 검출된 엣지를 시각화
 <br>
 
 ### 💻 주요 코드
@@ -74,9 +74,9 @@ sobel_edge_detection(image_path)
 <br>
 
 ### 📌 개념
-- 모폴로지 연산(Morphological Operations) 개념
-- cv.getStructuringElement()를 활용한 커널(kernel) 생성
-- cv.morphologyEx()를 이용한 모폴로지 연산 적용 방법
+- 캐니 에지 검출을 이용해 엣지를 추출
+- 허프 변환(Hough Transform)을 이용해 직선을 검출
+- 검출된 직선을 원본 이미지에 표시
 <br>
 
 ### 💻 주요 코드
@@ -147,14 +147,15 @@ detect_lines(image_path)
 
 ## 3️⃣ GrabCut을 이용한 대화식 영역 분할 및 객체 추출
 ### 🌀 과제 설명
-- 이미지를 45도 회전하고, 1.5배 확대
-- 확대된 이미지에 <b>선형 보간(Bilinear Interpolation)</b> 적용
+- GrabCut 알고리즘을 사용해 이미지에서 객체(전경)와 배경을 분리
 <br>
 
 ### 📌 개념
-- cv.getRotationMatrix2D()를 이용한 회전 변환 행렬 생성
-- cv.warpAffine()을 이용한 이미지 회전 적용 방법
-- cv.resize()를 이용한 이미지 확대 및 보간법(Interpolation) 개념
+- 초기 사각형(rect)을 설정하여 관심 영역 지정
+- GrabCut 알고리즘을 사용해 배경과 전경 분리
+- 마스크(mask) 처리를 통해 전경만 남김
+
+결과 시각화
 <br>
 
 ### 💻 주요 코드

@@ -63,7 +63,7 @@ sobel_edge_detection(image_path)
 <br>
 
 ### 🕵‍♀ 결과화면
-![결과이미지](./data/7.png)
+![결과이미지](./data/5_1.png)
 
 <br>
 <br>
@@ -140,7 +140,7 @@ detect_lines(image_path)
 <br>
 
 ### 🕵‍♀ 결과화면
-![결과이미지](./data/8.png)
+![결과이미지](./data/5_2.png)
 
 <br>
 <br>
@@ -224,4 +224,4 @@ grabcut_segmentation(image_path, rect)
 <br>
 
 ### 🕵‍♀ 결과화면
-![결과이미지](./data/9.png)
+![결과이미지](./data/5_3.png)

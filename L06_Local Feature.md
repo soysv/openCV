@@ -4,18 +4,28 @@
 <br>
   
 ### 📌 개념
-- SIFT(Scale-Invariant Feature Transform)
-: 크기(scale)와 회전(rotation)에 영향을 받지 않는 강력한 특징점 검출 알고리즘
-- 기울기를 조합하여 에지 강도(edge magnitude) 계산
-- 검출된 엣지를 시각화
+- <b>SIFT(Scale-Invariant Feature Transform)</b> <br>
+<p> : 크기(scale)와 회전(rotation)에 영향을 받지 않는 강력한 특징점 검출 알고리즘
+
+- <b>특징점(Keypoint) & 기술자(Descriptor)</b> <br>
+<p> : 이미지의 중요한 부분을 찾고, 해당 부분의 고유한 설명자를 생성
+
+- <b>cv.drawKeypoints()</b>: 이미지 위에 검출된 특징점을 시각화
 <br>
 
 ### 💻 주요 코드
-<p>✔ <b>이미지 불러오기 </b><code>cv.imread(image_path)</code><br></p>
-<p>✔ <b>그레이스케일 변환</b> <code>cv.cvtColor(image, cv.COLOR_BGR2GRAY)</code><br>
-<p>✔ <b>소벨 필터 적용</b> <code>cv.Sobel(src, ddepth, dx, dy, ksize)</code><br>
-<p>✔ <b>에지 강도 계산</b> <code>edge_magnitude = cv.magnitude(sobel_x, sobel_y)</code><br>
-<p>✔ <b>이미지 시각화</b> <code>cv.imshow()</code><br>
+<p>✔ <b>SIFT 객체 생성, 최대 500개 특징점 검출 </b><br><p><code>sift = cv.SIFT_create(nfeatures=500)</code><br></p>
+
+<p>✔ <b>특징점과 기술자 계산</b><br> <p><code>keypoints, descriptors = sift.detectAndCompute(gray, None)</code><br>
+<p>  - image: 입력 이미지 (Grayscale)<br>
+<p>  - mask: 관심 영역을 지정할 마스크 (None이면 전체 이미지 사용)<br>
+
+<p>✔ <b>특징점 시각화</b><br> 
+<p><code>image_with_keypoints = cv.drawKeypoints(image, keypoints, None, flags=cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)</code><br>
+<p>  - image: 원본 이미지<br>
+<p>  - keypoints:	SIFT 등의 알고리즘으로 검출된 특징점 리스트<br>
+<p>  - outImage: 출력 이미지 (None이면 원본 이미지에 표시)<br>
+<p>  - flags:	특징점 표시 방식 설정 (ex: 크기·방향 포함 여부)<br>
 <br>
 
 <br>
@@ -74,15 +84,22 @@ plt.show()
 <br>
 
 ### 📌 개념
-- 캐니 에지 검출을 이용해 엣지를 추출
-- 허프 변환(Hough Transform)을 이용해 직선을 검출
-- 검출된 직선을 원본 이미지에 표시
+- <b>BFMatcher (Brute-Force Matcher)</b><br>
+<p> : 두 이미지의 특징점 기술자를 비교하여 가장 유사한 것들을 매칭
+- <b>cv.BFMatcher(cv.NORM_L2, crossCheck=True)</b><br>
+<p> : L2 거리 기준으로 매칭, crossCheck=True는 상호 일치하는 경우만 선택
+- <b>cv.drawMatches()</b><br>
+<p> : 두 이미지 사이에서 매칭된 특징점을 시각화
 <br>
 
 ### 💻 주요 코드
-<p>✔ <b>캐니 에지 검출</b> <code>cv.Canny(image, threshold1, threshold2)</code><br>
-<p>✔ <b>허프 변환을 사용한 직선 검출</b> <code>cv.HoughLinesP(image, rho, theta, threshold, minLineLength, maxLineGap)</code><br>
-<p>✔ <b>검출된 직선을 원본 이미지에 빨간색으로 표시</b> <code>cv.line(image, (x1, y1), (x2, y2), (0, 0, 255), 2)</code><br>
+<p>✔ <b>두 이미지 간 특징점을 매칭하는 BFMatcher 생성</b><br> <p><code>bf = cv.BFMatcher(cv.NORM_L2, crossCheck=True)</code><br>
+<p>  - normType: 거리 계산 방법 (cv.NORM_L2: 유클리드 거리)<br>
+<p>  - crossCheck: 상호 검증 여부 (True이면 양쪽에서 매칭된 경우만 선택)
+<p>✔ <b>두 이미지의 특징점 기술자를 비교하여 가장 유사한 매칭을 반환</b><br> <p><code>matches = bf.match(descriptors1, descriptors2)</code><br>
+<p>- descriptors1: 첫 번째 이미지의 특징점 기술자<br>
+<p>✔ <b>각 특징점에 대해 가장 가까운 k개의 매칭을 반환 (KNN 방식)</b><br> <p><code>matches = bf.knnMatch(descriptors1, descriptors2, k=2)</code><br>
+<p>  - k: 한 특징점당 비교할 최근접 특징점 개수
 <br>
 
 <details>
@@ -141,23 +158,34 @@ plt.show()
 <br>
 
 ### 📌 개념
-- 초기 사각형(rect)을 설정하여 관심 영역 지정
-- GrabCut 알고리즘을 사용해 배경과 전경 분리
-- 마스크(mask) 처리를 통해 전경만 남김
+- <b>KNN 매칭</b>: 가장 가까운 두 개의 특징점을 찾아 비교하는 방식
+- <b>Ratio Test</b>: 좋은 매칭을 선택하기 위해 사용하는 비율 검증 기법
+- <b>Homography</b>: 이미지 간 투영 변환을 계산하는 행렬
+- <b>RANSAC</b>: 이상치를 제거하는 알고리즘, 호모그래피 계산 시 자주 사용함
 <br>
 
 ### 💻 주요 코드
-<p> ✔ <b> 초기 마스크 생성</b> <code>np.zeros(image.shape[:2], np.uint8)</code><br>
-<p> ✔ <b> 배경 모델과 전경 모델 초기화</b> <code>bgdModel = np.zeros((1, 65), np.float64)</code><br>
-<p> - cv.grabCut() 함수에서 사용하는 전경(foreground)과 배경(background) 모델을 저장할 배열 <br>
-<p> - 65: OpenCV에서 정해진 GMM(Gaussian Mixture Model) 파라미터 개수<br>
-<p> ✔ <b> 마스크 처리하여 배경 제거 </b> <code>mask2 = np.where((mask == cv.GC_BGD) | (mask == cv.GC_PR_BGD), 0, 1).astype('uint8')
+<p> ✔ <b> 호모그래피 행렬 H 계산</b> <br>
+<p><code>cv.findHomography(src_pts, dst_pts, method, ransacReprojThreshold)</code><br>
+<p> - src_pts : 원본 이미지의 특징점 좌표 리스트
+<p> - dst_pts : 대상 이미지의 특징점 좌표 리스트
+<p> - method : 변환 계산 방법 (cv.RANSAC 또는 cv.LMEDS)
+<p> - ransacReprojThreshold : RANSAC의 이상점 제거 임계값
+<br>
+
+<p> ✔ <b> 호모그래피 행렬 H를 이용해 이미지를 변환(정합).</b><br>
+ <p><code>v.warpPerspective(image, H, dsize)</code><br>
+<p> - image : 원본 이미지<br>
+<p> - H : 변환할 호모그래피 행렬<br>
+<p> - dsize : 출력 이미지 크기 (w, h) 튜플<br>
+
+<p> ✔ <b> 두 이미지 간 매칭된 특징점을 시각적으로 연결하여 표시 </b> <br>
+<p><code>cv.drawMatches(image1, keypoints1, image2, keypoints2, matches, outImg, flags)
 </code>
-<p> - cv.GC_BGD(0): 확실한 배경
-<p> - cv.GC_PR_BGD(2): 가능성이 높은 배경
-<p> - cv.GC_FGD(1): 확실한 전경
-<p> - cv.GC_PR_FGD(3): 가능성이 높은 전경
-<p> - 배경 픽셀을 제거하고 전경만 남김
+<p> - keypoints: 이미지의 특징점 리스트
+<p> - matches: 매칭된 특징점 리스트
+<p> - outImg: 출력 이미지 (None이면 자동 생성)
+<p> - flags: 매칭선 스타일 지정
 <br>
 <br>
 

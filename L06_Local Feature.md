@@ -91,6 +91,8 @@ plt.show()
 - <b>cv.drawMatches()</b><br>
 <p> : 두 이미지 사이에서 매칭된 특징점을 시각화
 <br>
+  <br>
+<br>
 
 ### 💻 주요 코드
 <p>✔ <b>두 이미지 간 특징점을 매칭하는 BFMatcher 생성</b><br> <p><code>bf = cv.BFMatcher(cv.NORM_L2, crossCheck=True)</code><br>
@@ -100,6 +102,9 @@ plt.show()
 <p>- descriptors1: 첫 번째 이미지의 특징점 기술자<br>
 <p>✔ <b>각 특징점에 대해 가장 가까운 k개의 매칭을 반환 (KNN 방식)</b><br> <p><code>matches = bf.knnMatch(descriptors1, descriptors2, k=2)</code><br>
 <p>  - k: 한 특징점당 비교할 최근접 특징점 개수
+<br>
+
+<br>
 <br>
 
 <details>
@@ -189,7 +194,7 @@ plt.show()
 <br>
 <br>
 
-
+<br>
 <details>
   <summary><b> 🧿 클릭해서 코드 보기 </b></summary>
 

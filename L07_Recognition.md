@@ -22,10 +22,11 @@ x_test = x_test / 255.0
 </code></p>
 <p>  -load_data(): MNIST 훈련/테스트 세트 불러오기<br>
 <br>
+  
 <p>✔ <b> 2. 라벨 인코딩 (One-Hot)</b><br> <p><code>from tensorflow.keras.utils import to_categorical
 y_train = to_categorical(y_train, 10)
 y_test = to_categorical(y_test, 10)
-</code><br>
+</code>
 <p>  - 정수형 클래스 레이블을 10차원 이진 벡터로 변환
 <br>
 <p>✔ <b> 3. 신경망 모델 구성</b><br> 
@@ -45,7 +46,7 @@ y_test = to_categorical(y_test, 10)
     Dense(128, activation='relu'),
     Dense(10, activation='softmax')
 ])
-</code><br>
+</code>
 <p> - Flatten: 28x28 이미지를 784차원 벡터로 바꿈<br>
 <p> - Dense(128): 은닉층 (ReLU 활성화)<br>
 <p> - Dense(10, softmax): 다중 클래스 분류용 출력층<br>

@@ -29,6 +29,7 @@ y_test = to_categorical(y_test, 10)
 </code>
 <p>  - 정수형 클래스 레이블을 10차원 이진 벡터로 변환
 <br>
+<br>
 <p>✔ <b> 3. 신경망 모델 구성</b><br> 
 <p><code>model = Sequential([
     Flatten(input_shape=(28, 28)),
@@ -106,13 +107,6 @@ print(f"\n✅ 테스트 정확도: {test_accuracy:.4f}")
 ### 🕵‍♀ 결과화면
 ![결과이미지](./data/6_1.png)
 
-
-
-### 📌 원 크기가 다른 이유
-- 원의 크기는 해당 특징점이 검출된 <b>스케일(크기)</b>을 나타냄.
-- 큰 원일수록 더 큰 영역을 대표하는 특징점.
-- 작은 원일수록 더 작은 영역을 대표하는 특징점.
-
 <br>
 <br>
 
@@ -124,7 +118,7 @@ print(f"\n✅ 테스트 정확도: {test_accuracy:.4f}")
 
 ### 📌 개념
 - <b>CNN (Convolutional Neural Network)</b><br>
-<p> : 이미지 분류에 자주 쓰이는 딥러닝 모델. Conv2D, MaxPooling, Flatten, Dense 계층으로 구성됨
+<p> : 이미지 분류에 자주 쓰이는 딥러닝 모델. Conv2D, MaxPooling, Flatten, Dense 계층으로 구성됨<br>
 - <b>정규화 (Normalization)</b><br>
 <p> : 입력 이미지의 픽셀 값을 0~1 범위로 스케일링하여 학습 안정성과 속도 향상
 <br>
@@ -136,16 +130,16 @@ print(f"\n✅ 테스트 정확도: {test_accuracy:.4f}")
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer',
                'dog', 'frog', 'horse', 'ship', 'truck']
-</code><br>
+</code>
 <p>  - load_data(): 훈련/테스트 데이터셋 분리<br>
 <p>  - class_names: 정수 레이블을 문자열로 매핑
-  
+  <br>
 <p>✔ <b>데이터 전처리 (정규화)
 </b><br> <p><code>x_train = x_train.astype('float32') / 255.0
 x_test = x_test.astype('float32') / 255.0
-</code><br>
+</code>
 <p>- 정규화를 통해 값의 범위를 0~1로 조정 → 빠르고 안정적인 학습 유도<br>
-  
+  <br>
 <p>✔ <b>CNN 모델 구성</b><br> <p><code>model = models.Sequential([
     layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
     layers.MaxPooling2D((2, 2)),
@@ -157,24 +151,21 @@ x_test = x_test.astype('float32') / 255.0
 
     layers.Flatten(),
     layers.Dense(64, activation='relu'),
-    layers.Dense(10, activation='softmax')  # CIFAR-10은 10개 클래스
-])
-</code><br>
+    layers.Dense(10, activation='softmax')  # CIFAR-10은 10개 클래스])
+</code>
 <p> - Conv2D: 이미지 특징 추출을 위한 필터 적용
 <p> - MaxPooling2D: 특징맵의 크기 감소 → 연산량 줄이기
 <p> - Flatten: 2D → 1D 벡터로 변환
 <p> - Dense: 출력층 포함한 Fully Connected Layer
 <p> - Softmax: 다중 클래스 확률 출력
 <br>
-  
+  <br>
 <p>✔ <b>모델 컴파일 및 학습</b><br> <p><code>model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
 history = model.fit(x_train, y_train, epochs=10,
-                    validation_data=(x_test, y_test))
-
-</code><br>
+                    validation_data=(x_test, y_test))</code><br>
 <p> - Adam: 학습률 조절에 뛰어난 옵티마이저<br>
 <p> - sparse_categorical_crossentropy: 정수 인코딩된 클래스 레이블에 적합한 손실 함수
 <br>
@@ -278,10 +269,13 @@ plt.show()
 
 ### 📌 개념
 - <b>전이 학습 (Transfer Learning)</b>
-<p>: 대규모 데이터셋에서 학습된 모델의 가중치를 가져와 새로운 과제에 재활용하는 기법. 적은 데이터로도 높은 성능을 낼 수 있음.</p>
+<p> * 대규모 데이터셋에서 학습된 모델의 가중치를 가져와 새로운 과제에 재활용하는 기법. </p>
+<p> * 적은 데이터로도 높은 성능을 낼 수 있음.</p>
 
 - <b>VGG16</b>
-<p>: ImageNet 데이터셋에 대해 학습된 깊은 CNN 모델. `tensorflow.keras.applications`에서 제공됨.</p> <p>: `include_top=False`로 설정하면, 최종 Fully Connected Layer를 제거한 **특징 추출기**로 활용 가능</p>
+<p> * ImageNet 데이터셋에 대해 학습된 깊은 CNN 모델.</p>
+<p> * `tensorflow.keras.applications`에서 제공됨.</p> 
+<p>: `include_top=False`로 설정하면, 최종 Fully Connected Layer를 제거한 특징 추출기로 활용 가능</p>
 
 - <b>CIFAR-10</b>
 
@@ -295,13 +289,13 @@ x_test = tf.image.resize(x_test, [224, 224]) / 255.0</code><br>
 <p> - resize(): CIFAR-10 이미지를 VGG16이 요구하는 크기(224x224)로 변경
 <p> - 정규화: 모델 학습 속도 향상을 위해 0~1 범위로 조정
 <br>
-
+<br>
 <p> ✔ <b> VGG16 모델 불러오기 및 고정</b><br>
  <p><code>base_model = VGG16(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 base_model.trainable = False</code><br>
 <p> - include_top=False: FC Layer 제거 → Feature Extractor로 사용
 <p> - trainable=False: 기존 가중치를 동결 → 학습 시 업데이트되지 않음
-
+<br>
 <p> ✔ <b> 새로운 분류기 쌓기 </b> <br>
 <p><code>model = models.Sequential([
     base_model,
@@ -315,7 +309,7 @@ base_model.trainable = False</code><br>
 <p> - Dense(256): 새로운 Fully Connected Layer
 <p> - Dropout: 과적합 방지를 위해 50% 노드 비활성화
 <p> - Dense(10): CIFAR-10 클래스 수에 맞춘 출력층 (Softmax)
-
+<br>
 <p> ✔️ <b> 모델 컴파일 및 학습</b><br>
 <p><code>model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
@@ -326,11 +320,11 @@ history = model.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test
 <p> - optimizer='adam': 빠른 수렴을 위한 옵티마이저
 <p> - sparse_categorical_crossentropy: 정수 형태의 레이블용 손실함수
 <p> - validation_data: 검증 정확도를 함께 확인하며 훈련 가능
-
+<br>
 <p> ✔️ <b> 성능 평가</b><br>
 <p><code>test_loss, test_acc = model.evaluate(x_test, y_test)
 print(f"\n✅ 전이 학습 모델 테스트 정확도: {test_acc:.4f}")
-</code><br>
+</code>
 <p> - 테스트 데이터로 최종 모델 평가
 <p> - evaluate(): 손실값과 정확도 출력
 <br>

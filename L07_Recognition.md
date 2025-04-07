@@ -92,32 +92,67 @@ print(f"\n✅ 테스트 정확도: {test_accuracy:.4f}")
 <br>
 <br>
 
-## 2️⃣ SIFT를 이용한 두 영상 간 특징점 매칭
+## 2️⃣ CIFAR-10을 활용한 CNN 이미지 분류기
 ### 🌀 과제 설명
-- 두 이미지 간 SIFT 특징점을 매칭하여 비교
+- CIFAR-10 이미지 데이터셋을 이용하여 합성곱 신경망(CNN)을 설계하고 학습
+- 테스트 이미지에 대해 예측을 수행하고 결과를 시각화
 <br>
 
 ### 📌 개념
-- <b>BFMatcher (Brute-Force Matcher)</b><br>
-<p> : 두 이미지의 특징점 기술자를 비교하여 가장 유사한 것들을 매칭
-- <b>cv.BFMatcher(cv.NORM_L2, crossCheck=True)</b><br>
-<p> : L2 거리 기준으로 매칭, crossCheck=True는 상호 일치하는 경우만 선택
-- <b>cv.drawMatches()</b><br>
-<p> : 두 이미지 사이에서 매칭된 특징점을 시각화
+- <b>CNN (Convolutional Neural Network)</b><br>
+<p> : 이미지 분류에 자주 쓰이는 딥러닝 모델. Conv2D, MaxPooling, Flatten, Dense 계층으로 구성됨
+- <b>정규화 (Normalization)</b><br>
+<p> : 입력 이미지의 픽셀 값을 0~1 범위로 스케일링하여 학습 안정성과 속도 향상
 <br>
   <br>
 <br>
 
 ### 💻 주요 코드
-<p>✔ <b>두 이미지 간 특징점을 매칭하는 BFMatcher 생성</b><br> <p><code>bf = cv.BFMatcher(cv.NORM_L2, crossCheck=True)</code><br>
-<p>  - normType: 거리 계산 방법 (cv.NORM_L2: 유클리드 거리)<br>
-<p>  - crossCheck: 상호 검증 여부 (True이면 양쪽에서 매칭된 경우만 선택)
-<p>✔ <b>두 이미지의 특징점 기술자를 비교하여 가장 유사한 매칭을 반환</b><br> <p><code>matches = bf.match(descriptors1, descriptors2)</code><br>
-<p>- descriptors1: 첫 번째 이미지의 특징점 기술자<br>
-<p>✔ <b>각 특징점에 대해 가장 가까운 k개의 매칭을 반환 (KNN 방식)</b><br> <p><code>matches = bf.knnMatch(descriptors1, descriptors2, k=2)</code><br>
-<p>  - k: 한 특징점당 비교할 최근접 특징점 개수
-<br>
+<p>✔ <b>CIFAR-10 데이터 로드 및 클래스 정의</b><br> <p><code>from tensorflow.keras.datasets import cifar10
+(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer',
+               'dog', 'frog', 'horse', 'ship', 'truck']
+</code><br>
+<p>  - load_data(): 훈련/테스트 데이터셋 분리<br>
+<p>  - class_names: 정수 레이블을 문자열로 매핑
+  
+<p>✔ <b>데이터 전처리 (정규화)
+</b><br> <p><code>x_train = x_train.astype('float32') / 255.0
+x_test = x_test.astype('float32') / 255.0
+</code><br>
+<p>- 정규화를 통해 값의 범위를 0~1로 조정 → 빠르고 안정적인 학습 유도<br>
+  
+<p>✔ <b>CNN 모델 구성</b><br> <p><code>model = models.Sequential([
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+    layers.MaxPooling2D((2, 2)),
 
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+
+    layers.Conv2D(64, (3, 3), activation='relu'),
+
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')  # CIFAR-10은 10개 클래스
+])
+</code><br>
+<p> - Conv2D: 이미지 특징 추출을 위한 필터 적용
+<p> - MaxPooling2D: 특징맵의 크기 감소 → 연산량 줄이기
+<p> - Flatten: 2D → 1D 벡터로 변환
+<p> - Dense: 출력층 포함한 Fully Connected Layer
+<p> - Softmax: 다중 클래스 확률 출력
+<br>
+  
+<p>✔ <b>모델 컴파일 및 학습</b><br> <p><code>model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+history = model.fit(x_train, y_train, epochs=10,
+                    validation_data=(x_test, y_test))
+
+</code><br>
+<p> - Adam: 학습률 조절에 뛰어난 옵티마이저<br>
+<p> - sparse_categorical_crossentropy: 정수 인코딩된 클래스 레이블에 적합한 손실 함수
 <br>
 <br>
 

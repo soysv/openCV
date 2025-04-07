@@ -1,33 +1,56 @@
-## 1️⃣ SIFT를 이용한 특징점 검출 및 시각화
+## 1️⃣MNIST 손글씨 분류를 위한 신경망 모델
 ### 🌀 과제 설명
-- SIFT를 사용하여 이미지의 특징점을 찾고 시각화
+- MNIST 손글씨 이미지(0~9 숫자)를 분류하는 간단한 신경망(MLP) 모델 구현
+- 데이터 전처리, 모델 구성, 학습 및 평가를 포함
 <br>
+
   
 ### 📌 개념
-- <b>SIFT(Scale-Invariant Feature Transform)</b> <br>
-<p> : 크기(scale)와 회전(rotation)에 영향을 받지 않는 강력한 특징점 검출 알고리즘
+- <b>Flatten</b> <br>
+<p> : 2D 이미지를 1D 벡터로 변환하여 Dense 층에 전달
 
-- <b>특징점(Keypoint) & 기술자(Descriptor)</b> <br>
-<p> : 이미지의 중요한 부분을 찾고, 해당 부분의 고유한 설명자를 생성
+- <b>One-Hot Encoding</b> <br>
+<p> : 정수 레이블을 이진 벡터로 변환하여 분류에 적합한 형태로 변경
 
-- <b>cv.drawKeypoints()</b>: 이미지 위에 검출된 특징점을 시각화
+- <b>Softmax</b>: 클래스별 확률을 출력하여 가장 높은 값을 가진 클래스를 예측
 <br>
 
 ### 💻 주요 코드
-<p>✔ <b>SIFT 객체 생성, 최대 500개 특징점 검출 </b><br><p><code>sift = cv.SIFT_create(nfeatures=500)</code><br></p>
+<p>✔ <b> 1. 데이터 로드 및 정규화 </b><br><p><code>(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+</code><br></p>
+<p>  -load_data(): MNIST 훈련/테스트 세트 불러오기<br>
 
-<p>✔ <b>특징점과 기술자 계산</b><br> <p><code>keypoints, descriptors = sift.detectAndCompute(gray, None)</code><br>
-<p>  - image: 입력 이미지 (Grayscale)<br>
-<p>  - mask: 관심 영역을 지정할 마스크 (None이면 전체 이미지 사용)<br>
+<p>✔ <b> 2. 라벨 인코딩 (One-Hot)</b><br> <p><code>from tensorflow.keras.utils import to_categorical
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+</code><br>
+<p>  - 정수형 클래스 레이블을 10차원 이진 벡터로 변환
 
-<p>✔ <b>특징점 시각화</b><br> 
-<p><code>image_with_keypoints = cv.drawKeypoints(image, keypoints, None, flags=cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)</code><br>
-<p>  - image: 원본 이미지<br>
-<p>  - keypoints:	SIFT 등의 알고리즘으로 검출된 특징점 리스트<br>
-<p>  - outImage: 출력 이미지 (None이면 원본 이미지에 표시)<br>
-<p>  - flags:	특징점 표시 방식 설정 (ex: 크기·방향 포함 여부)<br>
+<p>✔ <b> 3. 신경망 모델 구성</b><br> 
+<p><code>model = Sequential([
+    Flatten(input_shape=(28, 28)),
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')
+])
+</code><br>
+<p> - Flatten: 28x28 이미지를 784차원 벡터로 바꿈<br>
+<p> - Dense(128): 은닉층 (ReLU 활성화)<br>
+<p> - Dense(10, softmax): 다중 클래스 분류용 출력층<br>
+
+<p>✔ <b> 4. 모델 컴파일</b><br> 
+<p><code>model = Sequential([
+    Flatten(input_shape=(28, 28)),
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')
+])
+</code><br>
+<p> - Flatten: 28x28 이미지를 784차원 벡터로 바꿈<br>
+<p> - Dense(128): 은닉층 (ReLU 활성화)<br>
+<p> - Dense(10, softmax): 다중 클래스 분류용 출력층<br>
+
 <br>
-
 <br>
 
 

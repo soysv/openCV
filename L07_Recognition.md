@@ -134,6 +134,7 @@ class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer',
 <p>  - load_data(): 훈련/테스트 데이터셋 분리<br>
 <p>  - class_names: 정수 레이블을 문자열로 매핑
   <br>
+  <br>
 <p>✔ <b>데이터 전처리 (정규화)
 </b><br> <p><code>x_train = x_train.astype('float32') / 255.0
 x_test = x_test.astype('float32') / 255.0
@@ -170,7 +171,7 @@ history = model.fit(x_train, y_train, epochs=10,
 <p> - sparse_categorical_crossentropy: 정수 인코딩된 클래스 레이블에 적합한 손실 함수
 <br>
 <br>
-
+<br>
 <details>
   <summary><b> 🧿 클릭해서 코드 보기 </b></summary>
 
@@ -296,6 +297,7 @@ base_model.trainable = False</code><br>
 <p> - include_top=False: FC Layer 제거 → Feature Extractor로 사용
 <p> - trainable=False: 기존 가중치를 동결 → 학습 시 업데이트되지 않음
 <br>
+<br>
 <p> ✔ <b> 새로운 분류기 쌓기 </b> <br>
 <p><code>model = models.Sequential([
     base_model,
@@ -310,6 +312,7 @@ base_model.trainable = False</code><br>
 <p> - Dropout: 과적합 방지를 위해 50% 노드 비활성화
 <p> - Dense(10): CIFAR-10 클래스 수에 맞춘 출력층 (Softmax)
 <br>
+<br>
 <p> ✔️ <b> 모델 컴파일 및 학습</b><br>
 <p><code>model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
@@ -320,6 +323,7 @@ history = model.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test
 <p> - optimizer='adam': 빠른 수렴을 위한 옵티마이저
 <p> - sparse_categorical_crossentropy: 정수 형태의 레이블용 손실함수
 <p> - validation_data: 검증 정확도를 함께 확인하며 훈련 가능
+<br>
 <br>
 <p> ✔️ <b> 성능 평가</b><br>
 <p><code>test_loss, test_acc = model.evaluate(x_test, y_test)

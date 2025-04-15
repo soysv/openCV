@@ -7,22 +7,25 @@
   
 ### 📌 개념
 - <b>YOLOv4 (You Only Look Once v4)</b> <br>
-<p> : 객체를 빠르게 탐지하는 딥러닝 기반 모델로, 단일 프레임에서 다양한 객체의 위치와 종류를 예측 가능- 
- - <b>NMS (Non-Maximum Suppression)</b> <br>
-<p> : 중복된 박스를 제거하고 신뢰도가 높은 하나만 남기기 위한 필터링 기법
-- <b>SORT (Simple Online and Realtime Tracking)</b>:: 객체 탐지 결과를 기반으로 간단한 칼만 필터와 IOU 기반의 할당을 통해 객체를 실시간으로 추적하는 알고리즘
+: 객체를 빠르게 탐지하는 딥러닝 기반 모델로, 단일 프레임에서 다양한 객체의 위치와 종류를 예측 가능 <br> 
+
+ - <b>NMS (Non-Maximum Suppression)</b><br>
+ : 중복된 박스를 제거하고 신뢰도가 높은 하나만 남기기 위한 필터링 기법<br> 
+
+- <b>SORT (Simple Online and Realtime Tracking)</b><br>
+  : 객체 탐지 결과를 기반으로 간단한 칼만 필터와 IOU 기반의 할당을 통해 객체를 실시간으로 추적하는 알고리즘
 
 
 <br>
 
 ### 💻 주요 코드
-<p>✔ <b> 1. YOLOv4 모델 및 클래스 이름 불러오기 </b><br><p><code>net = cv2.dnn.readNet("yolo/yolov4.weights", "yolo/yolov4.cfg")
+<p>✔ <b> 1. YOLOv4 모델 및 클래스 이름 불러오기 </b><br><code>net = cv2.dnn.readNet("yolo/yolov4.weights", "yolo/yolov4.cfg")
 with open("yolo/coco.names", "r") as f:
     classes = [line.strip() for line in f.readlines()]
 </code></p>
-<p>  -yolov4.weights, yolov4.cfg, coco.names는 사전에 YOLO 공식 페이지에서 다운로드 필요
+<p>  - yolov4.weights, yolov4.cfg, coco.names는 사전에 YOLO 공식 페이지에서 다운로드 필요
 <br>
-  
+ <br> 
 <p>✔ <b>  2. 객체 탐지를 위한 전처리 및 예측 (One-Hot)</b><br> <p><code>blob = cv2.dnn.blobFromImage(frame, 1/255.0, (416, 416), swapRB=True, crop=False)
 net.setInput(blob)
 outs = net.forward(output_layers)
@@ -148,16 +151,17 @@ cv2.destroyAllWindows()
 
 ### 📌 개념
 - <b>Mediapipe FaceMesh</b><br>
-<p> : 얼굴의 468개 랜드마크를 고해상도로 추출해주는 모델로, 눈, 입술, 홍채 등의 세밀한 위치를 탐지 가능<br>
+: 얼굴의 468개 랜드마크를 고해상도로 추출해주는 모델로, 눈, 입술, 홍채 등의 세밀한 위치를 탐지 가능<br>
+
 - <b>cv2.flip()</b><br>
-<p> :영상을 좌우 반전하여 거울 효과를 적용 (자연스러운 사용자 경험 제공)
+:영상을 좌우 반전하여 거울 효과를 적용 (자연스러운 사용자 경험 제공)
 - <b>BGR → RGB 변환</b><br>
-<p> :OpenCV는 BGR 형식을 사용하지만 Mediapipe는 RGB를 사용하므로 cv2.cvtColor로 변환 필요
+:OpenCV는 BGR 형식을 사용하지만 Mediapipe는 RGB를 사용하므로 cv2.cvtColor로 변환 필요
 - <b>랜드마크 좌표 변환</b><br>
-<p> :Mediapipe의 랜드마크는 정규화된 좌표([0,1] 범위)이므로 이미지 크기에 맞게 정수형 픽셀 좌표로 변환해야 함
+:Mediapipe의 랜드마크는 정규화된 좌표([0,1] 범위)이므로 이미지 크기에 맞게 정수형 픽셀 좌표로 변환해야 함
 <br>
   <br>
-<br>
+
 
 ### 💻 주요 코드
 <p>✔ <b>1. Mediapipe FaceMesh 모델 초기화</b><br> <p><code>face_mesh = mp_face_mesh.FaceMesh(
@@ -173,8 +177,7 @@ cv2.destroyAllWindows()
   <br>
 <p>✔ <b>2. 웹캠 연결 및 프레임 처리(정규화)
 </b><br> <p><code>cap = cv2.VideoCapture(0)</code>
-<p>- 기본 카메라(0번 장치) 사용<br>
-  <br>
+<p>- 기본 카메라(0번 장치) 사용
 </b><br> <p><code>frame = cv2.flip(frame, 1)
 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 </code>
@@ -182,12 +185,12 @@ rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 <br>
   <br>
 <p>✔ <b> 3. 얼굴 랜드마크 추출 및 시각화</b><br> <p><code>results = face_mesh.process(rgb_frame)
-</code><br>
+</code>
 <p> - 현재 프레임에서 얼굴 랜드마크 추출<br>
 <p><code>for lm in face_landmarks.landmark:
     x, y = int(lm.x * w), int(lm.y * h)
     cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)
-</code><br>
+</code>
 <p> - 정규화된 좌표를 픽셀 좌표로 변환 후 초록 점으로 시각화
 <br>
 <br>

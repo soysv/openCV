@@ -1,56 +1,52 @@
-## 1️⃣MNIST 손글씨 분류를 위한 신경망 모델
+## 1️⃣ YOLOv4 + SORT를 이용한 객체 탐지 및 추적 시스템
 ### 🌀 과제 설명
-- MNIST 손글씨 이미지(0~9 숫자)를 분류하는 간단한 신경망(MLP) 모델 구현
-- 데이터 전처리, 모델 구성, 학습 및 평가를 포함
+- YOLOv4를 활용하여 영상 속 객체(사람, 차량 등)를 실시간 탐지
+- SORT(Simple Online and Realtime Tracking) 알고리즘을 통해 객체 추적
 <br>
 
   
 ### 📌 개념
-- <b>Flatten</b> <br>
-<p> : 2D 이미지를 1D 벡터로 변환하여 Dense 층에 전달
+- <b>YOLOv4 (You Only Look Once v4)</b> <br>
+<p> : 객체를 빠르게 탐지하는 딥러닝 기반 모델로, 단일 프레임에서 다양한 객체의 위치와 종류를 예측 가능
+- <b>NMS (Non-Maximum Suppression)</b> <br>
+<p> : 중복된 박스를 제거하고 신뢰도가 높은 하나만 남기기 위한 필터링 기법
+- <b>SORT (Simple Online and Realtime Tracking)</b>:: 객체 탐지 결과를 기반으로 간단한 칼만 필터와 IOU 기반의 할당을 통해 객체를 실시간으로 추적하는 알고리즘
 
-- <b>One-Hot Encoding</b> <br>
-<p> : 정수 레이블을 이진 벡터로 변환하여 분류에 적합한 형태로 변경
 
-- <b>Softmax</b>: 클래스별 확률을 출력하여 가장 높은 값을 가진 클래스를 예측
 <br>
 
 ### 💻 주요 코드
-<p>✔ <b> 1. 데이터 로드 및 정규화 </b><br><p><code>(x_train, y_train), (x_test, y_test) = mnist.load_data()
-x_train = x_train / 255.0
-x_test = x_test / 255.0
+<p>✔ <b> 1. YOLOv4 모델 및 클래스 이름 불러오기 </b><br><p><code>net = cv2.dnn.readNet("yolo/yolov4.weights", "yolo/yolov4.cfg")
+with open("yolo/coco.names", "r") as f:
+    classes = [line.strip() for line in f.readlines()]
 </code></p>
-<p>  -load_data(): MNIST 훈련/테스트 세트 불러오기<br>
+<p>  -yolov4.weights, yolov4.cfg, coco.names는 사전에 YOLO 공식 페이지에서 다운로드 필요
 <br>
   
-<p>✔ <b> 2. 라벨 인코딩 (One-Hot)</b><br> <p><code>from tensorflow.keras.utils import to_categorical
-y_train = to_categorical(y_train, 10)
-y_test = to_categorical(y_test, 10)
+<p>✔ <b>  2. 객체 탐지를 위한 전처리 및 예측 (One-Hot)</b><br> <p><code>blob = cv2.dnn.blobFromImage(frame, 1/255.0, (416, 416), swapRB=True, crop=False)
+net.setInput(blob)
+outs = net.forward(output_layers)
 </code>
-<p>  - 정수형 클래스 레이블을 10차원 이진 벡터로 변환
+<p>  - 입력 이미지를 YOLO가 요구하는 형식으로 변환 후 예측 수행
 <br>
 <br>
-<p>✔ <b> 3. 신경망 모델 구성</b><br> 
-<p><code>model = Sequential([
-    Flatten(input_shape=(28, 28)),
-    Dense(128, activation='relu'),
-    Dense(10, activation='softmax')
-])
+<p>✔ <b> 3. 출력 결과 해석 및 NMS 적용</b><br> 
+<p><code>for detection in out:
+    scores = detection[5:]
+    class_id = np.argmax(scores)
+    confidence = scores[class_id]
+    ...
+indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
 </code>
-<p> - Flatten: 28x28 이미지를 784차원 벡터로 바꿈<br>
-<p> - Dense(128): 은닉층 (ReLU 활성화)<br>
-<p> - Dense(10, softmax): 다중 클래스 분류용 출력층<br>
+<p> - confidence 0.5 이상인 박스만 탐지 대상으로 사용<br>
+<p> - NMS로 중복 제거 후 최종 탐지 결과 추림<br>
 <br>
-<p>✔ <b> 4. 모델 컴파일</b><br> 
-<p><code>model = Sequential([
-    Flatten(input_shape=(28, 28)),
-    Dense(128, activation='relu'),
-    Dense(10, activation='softmax')
-])
+<p>✔ <b>4. SORT 알고리즘을 통한 객체 추적</b><br> 
+<p><code>tracker = Sort()
+tracked_objects = tracker.update(np.array(dets))
 </code>
-<p> - Flatten: 28x28 이미지를 784차원 벡터로 바꿈<br>
-<p> - Dense(128): 은닉층 (ReLU 활성화)<br>
-<p> - Dense(10, softmax): 다중 클래스 분류용 출력층<br>
+<p> - 탐지된 박스를 [x1, y1, x2, y2, score] 형식으로 정리 후 SORT에 입력<br>
+<p> - 각 객체마다 고유한 ID 부여됨<br>
 
 <br>
 <br>
@@ -61,42 +57,76 @@ y_test = to_categorical(y_test, 10)
   <summary><b> 🧿 클릭해서 코드 보기 </b></summary>
   
   ```python
-import tensorflow as tf
-from tensorflow.keras.datasets import mnist
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten
-from tensorflow.keras.utils import to_categorical
+import cv2
+import numpy as np
+from sort.sort import Sort
 
-# 1. MNIST 데이터셋 로드
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
+# Load YOLOv4
+net = cv2.dnn.readNet("yolo/yolov4.weights", "yolo/yolov4.cfg")
+layer_names = net.getLayerNames()
+output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers().flatten()]
 
-# 2. 데이터 전처리
-# 픽셀 값 정규화 (0~255 → 0~1)
-x_train = x_train / 255.0
-x_test = x_test / 255.0
+# Load class names
+with open("yolo/coco.names", "r") as f:
+    classes = [line.strip() for line in f.readlines()]
 
-# 라벨을 one-hot encoding
-y_train = to_categorical(y_train, 10)
-y_test = to_categorical(y_test, 10)
+# Initialize video and tracker
+cap = cv2.VideoCapture(1)  # 웹캠 or 비디오 경로
+tracker = Sort()
 
-# 3. 간단한 신경망 모델 구성
-model = Sequential([
-    Flatten(input_shape=(28, 28)),  # 28x28 이미지를 1차원 벡터로 변환
-    Dense(128, activation='relu'), # 은닉층 (128개의 뉴런, ReLU 활성화 함수)
-    Dense(10, activation='softmax') # 출력층 (10개의 숫자 분류)
-])
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
 
-# 4. 모델 컴파일
-model.compile(optimizer='adam',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
+    height, width = frame.shape[:2]
 
-# 5. 모델 훈련
-model.fit(x_train, y_train, epochs=5, batch_size=32, validation_split=0.1)
+    # 객체 검출을 위한 전처리
+    blob = cv2.dnn.blobFromImage(frame, 1/255.0, (416, 416), swapRB=True, crop=False)
+    net.setInput(blob)
+    outs = net.forward(output_layers)
 
-# 6. 모델 평가
-test_loss, test_accuracy = model.evaluate(x_test, y_test)
-print(f"\n✅ 테스트 정확도: {test_accuracy:.4f}")
+    # YOLOv4의 출력 해석
+    boxes = []
+    confidences = []
+    class_ids = []
+
+    for out in outs:
+        for detection in out:
+            scores = detection[5:]
+            class_id = np.argmax(scores)
+            confidence = scores[class_id]
+            if confidence > 0.5:
+                center_x, center_y, w, h = (detection[0:4] * np.array([width, height, width, height])).astype('int')
+                x = int(center_x - w / 2)
+                y = int(center_y - h / 2)
+                boxes.append([x, y, int(w), int(h)])
+                confidences.append(float(confidence))
+                class_ids.append(class_id)
+
+    # NMS 적용
+    indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+
+    dets = []
+    for i in indices.flatten():
+        x, y, w, h = boxes[i]
+        dets.append([x, y, x + w, y + h, confidences[i]])  # 좌표 + 신뢰도
+
+    # SORT로 추적
+    tracked_objects = tracker.update(np.array(dets))
+
+    # 결과 시각화
+    for obj in tracked_objects:
+        x1, y1, x2, y2, obj_id = obj.astype(int)
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0,255,0), 2)
+        cv2.putText(frame, f'ID: {int(obj_id)}', (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,255,0), 2)
+
+    cv2.imshow("SORT Tracker", frame)
+    if cv2.waitKey(1) == 27:
+        break
+
+cap.release()
+cv2.destroyAllWindows()
 
 
  ```
@@ -105,7 +135,7 @@ print(f"\n✅ 테스트 정확도: {test_accuracy:.4f}")
 <br>
 
 ### 🕵‍♀ 결과화면
-![결과이미지](./data/7_1.png)
+![결과이미지](./data/8_1.png)
 
 <br>
 <br>
@@ -173,80 +203,59 @@ if cv2.waitKey(1) & 0xFF == 27:
   <summary><b> 🧿 클릭해서 코드 보기 </b></summary>
 
   ```python
-import tensorflow as tf
-from tensorflow.keras import layers, models
-import matplotlib.pyplot as plt
-import numpy as np
+import cv2
+import mediapipe as mp
 
-# 1. CIFAR-10 데이터셋 로드
-from tensorflow.keras.datasets import cifar10
+# Mediapipe 초기화
+mp_face_mesh = mp.solutions.face_mesh
+mp_drawing = mp.solutions.drawing_utils
 
-(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+# 얼굴 랜드마크 스타일
+drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1, color=(0, 255, 0))
 
-# 클래스 이름 정의
-class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer',
-               'dog', 'frog', 'horse', 'ship', 'truck']
+# FaceMesh 모델 초기화
+face_mesh = mp_face_mesh.FaceMesh(
+    max_num_faces=1,
+    refine_landmarks=True,  # 눈, 입술, 홍채 등 정밀한 위치 포함
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5
+)
 
-print("Train shape:", x_train.shape)
-print("Test shape:", x_test.shape)
+# OpenCV 웹캠 연결
+cap = cv2.VideoCapture(0)
 
-# 2. 데이터 전처리: 픽셀 정규화 (0~255 → 0~1)
-x_train = x_train.astype('float32') / 255.0
-x_test = x_test.astype('float32') / 255.0
+while cap.isOpened():
+    success, frame = cap.read()
+    if not success:
+        print("카메라를 열 수 없습니다.")
+        break
 
-# 3. CNN 모델 구성
-model = models.Sequential([
-    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
-    layers.MaxPooling2D((2, 2)),
+    # 영상 좌우반전 (거울 효과), BGR → RGB 변환
+    frame = cv2.flip(frame, 1)
+    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    layers.Conv2D(64, (3, 3), activation='relu'),
-    layers.MaxPooling2D((2, 2)),
+    # 랜드마크 검출
+    results = face_mesh.process(rgb_frame)
 
-    layers.Conv2D(64, (3, 3), activation='relu'),
+    h, w, _ = frame.shape
 
-    layers.Flatten(),
-    layers.Dense(64, activation='relu'),
-    layers.Dense(10, activation='softmax')  # CIFAR-10은 10개 클래스
-])
+    # 랜드마크 시각화
+    if results.multi_face_landmarks:
+        for face_landmarks in results.multi_face_landmarks:
+            for lm in face_landmarks.landmark:
+                x, y = int(lm.x * w), int(lm.y * h)
+                cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)  # 작은 초록 점
 
-# 4. 모델 컴파일
-model.compile(optimizer='adam',
-              loss='sparse_categorical_crossentropy',
-              metrics=['accuracy'])
+    # 결과 영상 출력
+    cv2.imshow('FaceMesh Landmark Tracker', frame)
 
-# 5. 모델 훈련
-history = model.fit(x_train, y_train, epochs=10,
-                    validation_data=(x_test, y_test))
+    # ESC 키 누르면 종료
+    if cv2.waitKey(1) & 0xFF == 27:
+        break
 
-# 6. 성능 평가
-test_loss, test_acc = model.evaluate(x_test, y_test, verbose=2)
-print(f"\n✅ 테스트 정확도: {test_acc:.4f}")
-
-# 7. 예측 수행 (테스트 이미지 일부 시각화)
-predictions = model.predict(x_test)
-
-# 8. 결과 시각화 함수
-def plot_image(i, predictions_array, true_label, img):
-    true_label, img = true_label[i][0], img[i]
-    plt.grid(False)
-    plt.xticks([])
-    plt.yticks([])
-
-    plt.imshow(img)
-
-    predicted_label = np.argmax(predictions_array)
-    color = 'blue' if predicted_label == true_label else 'red'
-
-    plt.xlabel(f"Prediction: {class_names[predicted_label]}\nLabel: {class_names[true_label]}", color=color)
-
-# 9. 예측 결과 출력 (5개 이미지)
-plt.figure(figsize=(10, 5))
-for i in range(5):
-    plt.subplot(1, 5, i + 1)
-    plot_image(i, predictions[i], y_test, x_test)
-plt.tight_layout()
-plt.show()
-
+# 정리
+cap.release()
+cv2.destroyAllWindows()
 
  ```
 </details>
@@ -254,134 +263,8 @@ plt.show()
 <br>
 
 ### 🕵‍♀ 결과화면
-![결과이미지](./data/7_2.png)
+![결과이미지](./data/8_2.png)
 
 <br>
 <br>
-
-## 3️⃣ VGG16을 활용한 전이 학습 기반 이미지 분류기
-### 🌀 과제 설명
-- 사전 학습된 VGG16 모델을 활용하여 CIFAR-10 데이터셋 분류기 성능을 향상시킴
-- VGG16의 Feature Extractor로서의 성능을 이용하고, 그 위에 새로운 분류기를 쌓아 학습
-<br>
-
-### 📌 개념
-- <b>전이 학습 (Transfer Learning)</b>
-<p> * 대규모 데이터셋에서 학습된 모델의 가중치를 가져와 새로운 과제에 재활용하는 기법. </p>
-<p> * 적은 데이터로도 높은 성능을 낼 수 있음.</p>
-
-- <b>VGG16</b>
-<p> * ImageNet 데이터셋에 대해 학습된 깊은 CNN 모델.</p>
-<p> * `tensorflow.keras.applications`에서 제공됨.</p> 
-<p>: `include_top=False`로 설정하면, 최종 Fully Connected Layer를 제거한 특징 추출기로 활용 가능</p>
-
-- <b>CIFAR-10</b>
-
-<p>: 총 10개의 이미지 클래스를 가진 소형 컬러 이미지 데이터셋 (32×32 크기)</p> <p>: VGG16의 입력 요구(224×224)로 크기 조정 필요</p> <br>
-
-### 💻 주요 코드
-<p> ✔ <b> CIFAR-10 데이터 로드 및 정규화</b> <br>
-<p><code>(x_train, y_train), (x_test, y_test) = cifar10.load_data()
-x_train = tf.image.resize(x_train, [224, 224]) / 255.0
-x_test = tf.image.resize(x_test, [224, 224]) / 255.0</code><br>
-<p> - resize(): CIFAR-10 이미지를 VGG16이 요구하는 크기(224x224)로 변경
-<p> - 정규화: 모델 학습 속도 향상을 위해 0~1 범위로 조정
-<br>
-<br>
-<p> ✔ <b> VGG16 모델 불러오기 및 고정</b><br>
- <p><code>base_model = VGG16(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
-base_model.trainable = False</code><br>
-<p> - include_top=False: FC Layer 제거 → Feature Extractor로 사용
-<p> - trainable=False: 기존 가중치를 동결 → 학습 시 업데이트되지 않음
-<br>
-<br>
-<p> ✔ <b> 새로운 분류기 쌓기 </b> <br>
-<p><code>model = models.Sequential([
-    base_model,
-    layers.Flatten(),
-    layers.Dense(256, activation='relu'),
-    layers.Dropout(0.5),
-    layers.Dense(10, activation='softmax')
-])
-</code>
-<p> - Flatten(): Feature map을 1D 벡터로 변환
-<p> - Dense(256): 새로운 Fully Connected Layer
-<p> - Dropout: 과적합 방지를 위해 50% 노드 비활성화
-<p> - Dense(10): CIFAR-10 클래스 수에 맞춘 출력층 (Softmax)
-<br>
-<br>
-<p> ✔️ <b> 모델 컴파일 및 학습</b><br>
-<p><code>model.compile(optimizer='adam',
-              loss='sparse_categorical_crossentropy',
-              metrics=['accuracy'])
-
-history = model.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test))
-</code><br>
-<p> - optimizer='adam': 빠른 수렴을 위한 옵티마이저
-<p> - sparse_categorical_crossentropy: 정수 형태의 레이블용 손실함수
-<p> - validation_data: 검증 정확도를 함께 확인하며 훈련 가능
-<br>
-<br>
-<p> ✔️ <b> 성능 평가</b><br>
-<p><code>test_loss, test_acc = model.evaluate(x_test, y_test)
-print(f"\n✅ 전이 학습 모델 테스트 정확도: {test_acc:.4f}")
-</code>
-<p> - 테스트 데이터로 최종 모델 평가
-<p> - evaluate(): 손실값과 정확도 출력
-<br>
-<br>
-
-<br>
-<details>
-  <summary><b> 🧿 클릭해서 코드 보기 </b></summary>
-
-  ```python
-import tensorflow as tf
-from tensorflow.keras import layers, models
-from tensorflow.keras.applications import VGG16
-from tensorflow.keras.datasets import cifar10
-import numpy as np
-import matplotlib.pyplot as plt
-
-# 1. 데이터 로드 및 전처리
-(x_train, y_train), (x_test, y_test) = cifar10.load_data()
-
-# CIFAR-10은 (32,32,3)이므로 VGG16 (224,224,3)로 resize
-x_train = tf.image.resize(x_train, [224, 224]) / 255.0
-x_test = tf.image.resize(x_test, [224, 224]) / 255.0
-
-# 2. VGG16 불러오기 (최상위 레이어 제외)
-base_model = VGG16(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
-
-# 사전학습된 가중치 고정 (Feature Extractor로 사용)
-base_model.trainable = False
-
-# 3. 새 분류기 구성 (Fine-tuning용)
-model = models.Sequential([
-    base_model,
-    layers.Flatten(),
-    layers.Dense(256, activation='relu'),
-    layers.Dropout(0.5),
-    layers.Dense(10, activation='softmax')  # CIFAR-10 클래스 수
-])
-
-# 4. 모델 컴파일
-model.compile(optimizer='adam',
-              loss='sparse_categorical_crossentropy',
-              metrics=['accuracy'])
-
-# 5. 모델 학습
-history = model.fit(x_train, y_train, epochs=10,
-                    validation_data=(x_test, y_test))
-
-# 6. 성능 평가
-test_loss, test_acc = model.evaluate(x_test, y_test)
-print(f"\n✅ 전이 학습 모델 테스트 정확도: {test_acc:.4f}")
- ```
-</details>
-
-<br>
-
-### 🕵‍♀ 결과화면
-![결과이미지](./data/7_3.png)
 

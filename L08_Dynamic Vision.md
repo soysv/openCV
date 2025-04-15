@@ -7,8 +7,8 @@
   
 ### 📌 개념
 - <b>YOLOv4 (You Only Look Once v4)</b> <br>
-<p> : 객체를 빠르게 탐지하는 딥러닝 기반 모델로, 단일 프레임에서 다양한 객체의 위치와 종류를 예측 가능
-- <b>NMS (Non-Maximum Suppression)</b> <br>
+<p> : 객체를 빠르게 탐지하는 딥러닝 기반 모델로, 단일 프레임에서 다양한 객체의 위치와 종류를 예측 가능- 
+ - <b>NMS (Non-Maximum Suppression)</b> <br>
 <p> : 중복된 박스를 제거하고 신뢰도가 높은 하나만 남기기 위한 필터링 기법
 - <b>SORT (Simple Online and Realtime Tracking)</b>:: 객체 탐지 결과를 기반으로 간단한 칼만 필터와 IOU 기반의 할당을 통해 객체를 실시간으로 추적하는 알고리즘
 
